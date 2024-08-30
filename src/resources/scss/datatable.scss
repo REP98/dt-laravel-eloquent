@@ -1,0 +1,14 @@
+@import "bootstrap/scss/bootstrap";
+@import "simple-datatables/src/css/style";
+
+.datatable-wrapper{
+    & :focus{
+        box-shadow: none !important;
+    }
+    .datatable-selector{
+        padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;
+    }
+    .datatable-input{
+        padding: 0.25rem 0.5rem !important;
+    }
+}

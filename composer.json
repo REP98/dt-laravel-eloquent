@@ -1,0 +1,53 @@
+{
+    "name": "rep98/dt-laravel-eloquent",
+    "description": "Simple DataTable para Laravel Eloquent",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["laravel", "datatable", "table"],
+    "authors": [
+        {
+            "name": "Robert Pérez",
+            "email": "delfinmundo@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DTLaravelEloquent\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DTLaravelEloquent\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DTLaravelEloquent\\RDataTableServiceProvider"
+            ]
+        }
+    },    
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.0",
+        "barryvdh/laravel-dompdf": "^3.0",
+        "illuminate/config": "^9.21|^10.0|^11.0",
+        "illuminate/console": "^9.21|^10.0|^11.0",
+        "illuminate/database": "^9.21|^10.0|^11.0",
+        "illuminate/filesystem": "^9.21|^10.0|^11.0",
+        "illuminate/log": "^9.21|^10.0|^11.0",
+        "illuminate/support": "^9.21|^10.0|^11.0",
+        "maatwebsite/excel": "^3.1"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.35|^8.15|^9.0",
+        "phpunit/phpunit": "^9.3|^10.4|^11.0"
+    }
+}
