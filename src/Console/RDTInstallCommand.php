@@ -26,8 +26,8 @@ class RDTInstallCommand extends Command
 
     protected function copyRawAssets()
     {
-        $this->copyFiles(__DIR__.'/src/resources/js', 'resources/js');
-        $this->copyFiles(__DIR__.'/src/resources/scss', 'resources/sass');
+        $this->copyFiles(__DIR__.'/../resources/js', 'resources/js');
+        $this->copyFiles(__DIR__.'/../resources/scss', 'resources/sass');
 
         $this->info('Archivos SCSS y JS sin transpilar copiados correctamente.');
     }
