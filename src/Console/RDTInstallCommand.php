@@ -3,7 +3,7 @@ namespace DTLaravelEloquent\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Process;
+use Symfony\Component\Process\Process;
 
 class RDTInstallCommand extends Command
 {
@@ -26,11 +26,31 @@ class RDTInstallCommand extends Command
 
     protected function copyRawAssets()
     {
-        $this->copyFiles(__DIR__.'/../resources/js', 'resources/js');
-        $this->copyFiles(__DIR__.'/../resources/scss', 'resources/sass');
+        $path = dirname(__DIR__);
+        $assets = [
+            'js' => $path . "/resources/js",
+            'sass' => $path . "/resources/scss"
+        ];
+
+        foreach ($assets as $type => $sourcePath) {
+            $destinationPath = resource_path($type);
+
+            if (!File::exists($sourcePath)) {
+                $this->error("El directorio $sourcePath no existe.");
+                return;
+            }
+
+            File::ensureDirectoryExists($destinationPath);
+
+            $files = File::allFiles($sourcePath);
+            foreach ($files as $file) {
+                File::copy($file->getPathname(), $destinationPath . '/' . $file->getFilename());
+            }
+        }
 
         $this->info('Archivos SCSS y JS sin transpilar copiados correctamente.');
     }
+
 
     protected function publishCompiledAssets()
     {
@@ -46,34 +66,16 @@ class RDTInstallCommand extends Command
     {
         $this->info('Instalando dependencias npm...');
 
-        $result = Process::run('npm install bootstrap @rep985/fascinots simple-datatables', function ($process) {
-            $process->setWorkingDirectory(base_path());
-        });
+        $process = new Process(['npm', 'install', 'bootstrap', '@rep985/fascinots', 'simple-datatables']);
+        $process->setWorkingDirectory(base_path());
+        $process->run();
 
-        if (!$result->successful()) {
+        if (!$process->isSuccessful()) {
             $this->error('Error al instalar las dependencias npm.');
             return;
         }
 
         $this->info('Dependencias npm instaladas correctamente.');
     }
-    
-    protected function copyFiles($source, $destination)
-    {
-        $sourcePath = base_path($source);
-        $destinationPath = base_path($destination);
-
-        if (!File::exists($sourcePath)) {
-            $this->error("El directorio $sourcePath no existe.");
-            return;
-        }
-
-        File::ensureDirectoryExists($destinationPath);
-
-        $files = File::allFiles($sourcePath);
-        foreach ($files as $file) {
-            File::copy($file->getPathname(), $destinationPath . '/' . $file->getFilename());
-        }
-    }
-    
+   
 }
