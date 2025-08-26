@@ -3,8 +3,8 @@ use Illuminate\Support\Str;
 
 return [
     /**
-     * OPCIONES DE CONFIGURACIÓN DEL COMPONETNE, LA MAYORIA SON TOMADOS
-     * DE FORMA AUTOMATICA
+     * OPCIONES DE CONFIGURACIÓN DEL COMPONENTE, LA MAYORÍA SON TOMADOS
+     * DE FORMA AUTOMÁTICA
      */
     "options" => [
         'type' => 'html',

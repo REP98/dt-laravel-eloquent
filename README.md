@@ -1,6 +1,6 @@
 # DataTabla Laravel Eloquent
 
-Un simple, pero potente datatable hecho para colecciones y eloquent de Laravel, su integración y uso es muy sencillo.
+Un simple, pero potente DataTable hecho para colecciones y eloquent de Laravel, su integración y uso es muy sencillo.
 
 ![Capture de Pantalla](prints.png)
 
@@ -33,7 +33,7 @@ use DTLaravelEloquent\RDT;
 
 function index() {
     $dt = RDT::make(User::all())
-        ->exclude(["password"])
+        ->excludeFields(["password"])
         ->render()
     return view("auth.users", compact("dt"))
 }
@@ -44,8 +44,6 @@ en Blade
 ```blade
 {{-- para el export --}}
 <meta name="csrf-token" content="{{ csrf_token() }}">
-{{-- Añadimos los script --}}
-<x-dt::scripts />
 {{-- la tabla --}}
 {!! $dt !!}
 ```
@@ -83,19 +81,20 @@ Opciones de Configuración del Componente JS
 | `options.locale` | `en` | Idioma de la tabla; por defecto, la clase `RDTOptions` intenta obtener el idioma de sus configuraciones aplicadas a `app.php` y las asigna a esta opción. |
 | `options.perPage` | `20` | Cantidad de resultados por página |
 | `options.perPageSelect` | `[5, 20, 50, 100, 150]` |  Matriz que permite al componente generar un selector para indicar cuántos resultados ver por página  |
-| `options.labels` | `array` | Son textos que se muestran en el Datatable, por defecto, la clase `RDTOptions` intenta obtenerlos desde la carpeta lang del componente, para conocer más [aquí](https://fiduswriter.github.io/simple-datatables/documentation/labels) |
+| `options.labels` | `array` | Son textos que se muestran en el DataTable, por defecto, la clase `RDTOptions` intenta obtenerlos desde la carpeta lang del componente, para conocer más [aquí](https://fiduswriter.github.io/simple-datatables/documentation/labels) |
 
 ### Clase de configuración
 
 La clase `RDTOptions` se usa para establecer opciones de configuración que luego serán transformadas en un objeto JavaScript para la librería [`fiduswriter/simple-datatables`](https://fiduswriter.github.io/simple-datatables/)
 
-Sus miedos son:
+Sus métodos son:
 
-* `__construct(array $options = [])` Inicializa la clase de opciones, recibe las opciones que se usarán.
-* `set(string $key, mixed $value): RDTOptions` permite establecer una nueva opción o actualizar una existente.
-* `merge(array $options): RDTOptions` Permite mezclar múltiples opciones
-* `toArray(): array` Exporta las opciones configuradas en un `array`.
-* `toCollect(): Collection` Exporta una colección Laravel de las opciones.
+- `__construct(array $options = [])` Inicializa la clase de opciones, recibe las opciones que se usarán.
+- `set(string $key, mixed $value): RDTOptions` permite establecer una nueva opción o actualizar una existente.
+- `get(string $key, mixed $default = null): mixed` permite obtener el valor de una opción dada. 
+- `merge(array $options): RDTOptions` Permite mezclar múltiples opciones
+- `toArray(): array` Exporta las opciones configuradas en un `array`.
+- `toCollect(): Collection` Exporta una colección Laravel de las opciones.
 
 Esta clase tiene métodos protegidos `protected` que permite establecer opciones por defecto y obtener el idioma o ajustes de fechas de forma automática.
 
@@ -120,21 +119,21 @@ return RDT::DB(MyModel::all())
 ### Sus Métodos
 
 Métodos Estáticos
-
-* `RDT::collection(Collection $data): RDT` Recibe una colección Laravel e inicializa el componente.
-* `RDT::DB(Collection $data): RDT` Recibe una colección Eloquent de Laravel e inicializa el componente.
-* `RDT::make(Collection $data): RDT` Recibe una colección ó colección Eloquent de Laravel e inicializa el componente.
+- `RDT::collection(Collection $data): RDT` Recibe una colección Laravel e inicializa el componente.
+- `RDT::DB(Collection $data): RDT` Recibe una colección Eloquent de Laravel e inicializa el componente.
+- `RDT::make(Collection|EloquentCollection|array $data): RDT` Recibe una colección ó colección Eloquent de Laravel e inicializa el componente.
 
 Métodos Públicos
 
-* `setOption(RDTOptions $options): RDT` Permite establecer opciones de configuración a los datos actuales.
-* `getOptions(): RDTOptions` Retorna las opciones establecidas.
-* `mergeOptions(array|RDTOptions $options): RDT` Permite mezclar opciones nuevas con las existentes, útil cuando queremos usar condiciones o datos dinámicos.
-* `log(): RDT` Inicial los registros logs para esta tabla.
-* `excludeFields(array $fields): RDT` Permite excluir campos de los datos pasados en el constructor.
-* `getData(): array` Permite obtener los datos procesados.
+- `setOption(RDTOptions $options): RDT` Permite establecer opciones de configuración a los datos actuales.
+- `getOptions(): RDTOptions` Retorna las opciones establecidas.
+- `mergeOptions(array|RDTOptions $options): RDT` Permite mezclar opciones nuevas con las existentes, útil cuando queremos usar condiciones o datos dinámicos.
+- `humanHeaders(array $header): RDT` Permite transformar la cabecera de la tabla en algo mas legible para Humanos.
+- `log(): RDT` Inicial los registros logs para esta tabla.
+- `excludeFields(array $fields): RDT` Permite excluir campos de los datos pasados en el constructor.
+- `getData(): array` Permite obtener los datos procesados.
 * `getRawData() : array` Permite obtener los datos sin procesar.
-* `set_uniqueID(string $id): RDT` Permite establecer un identificador único para esta tabla; por defecto, se usa la función `uuid` de la clase `Str` para generarlo.
+* `set_uniqueID(?string $id=null): RDT` Permite establecer un identificador único para esta tabla; por defecto, se autógena.
 * `render()` Esta quizás es la función más importante y la única obligatoria aparte del constructor, es la responsable de retornar la vista con la tabla generada.
 
 ## Comando
@@ -147,6 +146,6 @@ Métodos Públicos
 
 ## Adicional
 
-Este paquete esta desarrollado usando [fiduswriter/simple-datatables](https://fiduswriter.github.io/simple-datatables/) con [Bootstrap 5.3](https://getbootstrap.com/) y utiliza iconos SVG de [Bootstrap Icon](https://icons.getbootstrap.com/), fue provado en [Laravel Vesión 11](https://laravel.com/docs/11.x/installation).
+Este paquete esta desarrollado usando [fiduswriter/simple-datatables](https://fiduswriter.github.io/simple-datatables/) con [Bootstrap 5.3](https://getbootstrap.com/) y utiliza iconos SVG de [Bootstrap Icon](https://icons.getbootstrap.com/), fue provado en [Laravel Vesión 11](https://laravel.com/docs/11.x/installation) y actualizado a [Laravel Vesión 12](https://laravel.com/docs/12.x/installation).
 
-La finalidad de este desarrollo es el depoder ayudar con un Datatable Simple, Rapido y eficiente.
+La finalidad de este desarrollo es el poder ayudar con un DataTable Simple, Rápido y eficiente.

@@ -29,7 +29,7 @@ class RDTInstallCommand extends Command
         $path = dirname(__DIR__);
         $assets = [
             'js' => $path . "/resources/js",
-            'sass' => $path . "/resources/scss"
+            'css' => $path . "/resources/css"
         ];
 
         foreach ($assets as $type => $sourcePath) {
@@ -66,7 +66,7 @@ class RDTInstallCommand extends Command
     {
         $this->info('Instalando dependencias npm...');
 
-        $process = new Process(['npm', 'install', 'bootstrap', '@rep985/fascinots', 'simple-datatables']);
+        $process = new Process(['npm', 'install', 'bootstrap', 'lodash', 'simple-datatables']);
         $process->setWorkingDirectory(base_path());
         $process->run();
 

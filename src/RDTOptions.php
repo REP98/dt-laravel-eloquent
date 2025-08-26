@@ -2,6 +2,7 @@
 namespace DTLaravelEloquent;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 
 /**
  * Opciones Generales del DataTable
@@ -143,8 +144,19 @@ class RDTOptions
      */
     public function set(string $key, $value): self
     {
-        $this->options[$key] = $value;
+        Arr::set($this->options, $key, $value);
         return $this;
+    }
+    /**
+     * Obtiene el valor de una opción especifica
+     *
+     * @param   string  $key      La Clave a buscar
+     * @param   mixed  $default  Valor por defecto si no existe
+     *
+     * @return  mixed 
+     */
+    public function get(string $key, $default = null) {
+        return Arr::get($this->options, $key, $default);
     }
     /**
      * Mezcla las opciones con una nueva matriz

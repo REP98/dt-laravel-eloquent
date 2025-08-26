@@ -1,0 +1,18 @@
+@import "bootstrap/scss/bootstrap";
+@import "simple-datatables/src/css/style";
+
+.rdt-container {
+    width: clamp(90dvw, 100%, 100dvh);
+}
+
+.datatable-wrapper :focus {
+    box-shadow: none !important;
+}
+.datatable-wrapper .datatable-selector {
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;
+}
+
+.datatable-wrapper .datatable-input{
+        padding: 0.25rem 0.5rem !important;
+}
+

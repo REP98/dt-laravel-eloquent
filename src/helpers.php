@@ -2,7 +2,7 @@
 
 if (!function_exists("DtrecursiveMerge")) {
     /**
-     * Funcion que permite la mezcla y extension de 2 matrices
+     * Función que permite la mezcla y extension de 2 matrices
      *
      * @param   array  $array1  Matriz uno
      * @param   array  $array2  Matriz 2

@@ -27,6 +27,7 @@ class RDataTableServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/resources/lang', 'datatable');
 
         // Publicar archivos CSS y JS
+
         $this->publishes([
             __DIR__.'/../dist' => public_path('vendor/dtlaravel'),
         ], 'public');

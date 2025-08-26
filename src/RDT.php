@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\View;
 
 /**
  * Clase Matriz del Datatable
@@ -96,8 +97,9 @@ class RDT
             }
             throw new \InvalidArgumentException('Data must be an array, Collection, or EloquentCollection.');
         }
-        $this->uniqueId = Str::uuid()->toString();
+        
         $this->setOption(new RDTOptions());
+        $this->set_uniqueID();
     }
     /**
      * Establece las opciones del Datatable
@@ -134,6 +136,13 @@ class RDT
         );
         return $this;
     }
+    /**
+     * Transforma las cabeceras para lectura humana
+     *
+     * @param   array  $header  Lista de Cabecera `[header_name => header_human_name]`
+     *
+     * @return  \DTLaravelEloquent\RDT
+     */
     public function humanHeaders(array $header) : self 
     {
         return $this->mergeOptions([
@@ -213,9 +222,15 @@ class RDT
      *
      * @return  RDT
      */
-    public function set_uniqueID(string $id): self
+    public function set_uniqueID(?string $id = null): self
     {
-        $this->uniqueId = $id;
+        if (!is_null($id)) {
+            $this->uniqueId = $id;
+        } else {
+            $suffix = substr(md5("datatable" . microtime(true)), 0, 8);
+            $this->uniqueId = "datatable_" . $suffix;
+        }
+
         return $this;
     }
     /**
@@ -232,13 +247,15 @@ class RDT
             Log::info('RDT Data-'.$this->uniqueId.':', $this->data->toArray());
             Log::info('RDT Options-'.$this->uniqueId.':', $this->options->toArray());
         }
-
+        if (is_null($this->uniqueId)) {
+            $this->set_uniqueID();
+        }
         // Render the DataTable (this is a placeholder, you need to implement the actual rendering logic)
-        return view('datatable::datatable', [
+        return View::make('datatable::datatable', [
             'data' => $processedData,
             'options' => $this->options->toArray(),
             'uniqueId' => $this->uniqueId,
-            "exname" => config("RDataTable.export.name", "RDTExport")
-        ]);
+            "exportname" => config("RDataTable.export.name", "RDTExport")
+        ])->render();
     }
 }

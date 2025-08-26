@@ -1,11 +1,11 @@
-import "@rep985/fascinots";
+import _ from 'lodash';
 
 import { DataTable } from "simple-datatables";
 import {defaultConfig} from "simple-datatables/src/config"
 import { template } from "./template";
 
 
-const DTDefault = _$.assignIn(defaultConfig, {
+const DTDefault = _.assignIn(defaultConfig, {
     classes: {
         active: "active",
         disabled: "disabled",
@@ -64,50 +64,36 @@ const DTDefault = _$.assignIn(defaultConfig, {
 
 const api = {
     excel: async function(data, name) {
-        return await fetch('/dt/export/excel/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': getToken()
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
+        try {
+            const response = await axios.post('/dt/export/excel/', data, {
+                responseType: 'blob' // Importante para manejar archivos
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
             const a = document.createElement('a');
             a.href = url;
-            a.download = name+'.xlsx'; // Puedes ajustar el nombre del archivo aquí
+            a.download = name + '.xlsx';
             document.body.appendChild(a);
             a.click();
             a.remove();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        } catch (error) {
+            console.error('Error al exportar a Excel:', error);
+        }
     },
-    pdf: async function(data,name) {
-        return await fetch('/dt/export/pdf/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': getToken()
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
+    pdf: async function(data, name) {
+        try {
+            const response = await axios.post('/dt/export/pdf/', data, {
+                responseType: 'blob' // Importante para manejar archivos
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
             const a = document.createElement('a');
             a.href = url;
-            a.download = name+'.pdf'; // Puedes ajustar el nombre del archivo aquí
+            a.download = name + '.pdf';
             document.body.appendChild(a);
             a.click();
             a.remove();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        } catch (error) {
+            console.error('Error al exportar a PDF:', error);
+        }
     },
     formattedData: (data) => {
         return data.data.map(row => {
@@ -115,67 +101,91 @@ const api = {
                 obj[heading] = row[index];
                 return obj;
             }, {});
-        })
+        });
     }
 };
 
 export const getToken = () => {
-    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const token = document.head.querySelector('meta[name="csrf-token"]').content;
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
+    return token;
 }
 
-export const DTLaravel = (el, data, options) => {
-    const opt = _$.assignIn(DTDefault, options);
+const str2obj = (strs) => {
+    try {
+        const obj = JSON.parse(strs)
+        return obj
+    } catch(e) {
+        return strs;
+    }
+}
+
+export const DTLaravel = (selector, data, options) => {
+    data = str2obj(data)
+    const el = document.querySelector(selector)
+    if (!el) { return; }
+    const opt = _.assignIn(DTDefault, str2obj(options) );
     opt.data = data
     if (opt.caption == null) {
         opt.caption = undefined;
     }
 
-
     const DT = new DataTable(el, opt);
+
     DT.on("datatable.init", () => {
         setTimeout(() => {
-            const WrapParent = _$(el).parents(".datatable-wrapper");
-            const UID = _$("table", WrapParent.first).attr("id").replace("datatable-", "")
-            if (_$.hasIn(DT.options.labels, 'headers')) {
-                const Headers = _$("table thead tr th button", WrapParent.first)
+            const WrapParent = el.closest(".datatable-wrapper");
+            if (!WrapParent) return;
+            const tableEl = WrapParent.querySelector("table");
+            if (!tableEl) return;
+            const UID = tableEl.id.replace("datatable-", "");
+
+            if (_.hasIn(DT.options.labels, 'headers')) {
+                const Headers = WrapParent.querySelectorAll("table thead tr th button");
                 const Trans = DT.options.labels.headers;
-                Headers.each((th) => {
-                    const txt = _$(th).text()
-                    if (_$.hasIn(Trans, txt)) {
-                        _$(th).data("text", txt)
-                        _$(th).text(Trans[txt])
+                Headers.forEach((th) => {
+                    const txt = th.textContent;
+                    if (_.hasIn(Trans, txt)) {
+                        th.dataset.text = txt;
+                        th.textContent = Trans[txt];
                     }
                 })
             }
-            _$(".ex-excel", WrapParent.first).click(function() {
+
+            WrapParent.querySelector(".ex-excel")?.addEventListener("click", () => {
                 api.excel(
                     DT.options.data,
-                    _$("table", WrapParent.first).data("export-name")
-                )
-            })
-            _$(".ex-pdf", WrapParent.first).click(function() {
+                    tableEl.dataset.exportName
+                );
+            });
+
+            WrapParent.querySelector(".ex-pdf")?.addEventListener("click", () => {
                 api.pdf(
                     DT.options.data,
-                    _$("table", WrapParent.first).data("export-name")
-                )
-            })
-            _$(".filterclean", WrapParent.first).click(function(){
-                _$("input", WrapParent.first).each((input) => {
-                    input.value = ""
-                })
-            })
-            _$(".update", WrapParent.first).click(function(){
-                location.reload()
-            })
+                    tableEl.dataset.exportName
+                );
+            });
+
+            WrapParent.querySelector(".filterclean")?.addEventListener("click", () => {
+                const inputs = WrapParent.querySelectorAll("input");
+                inputs.forEach((input) => {
+                    input.value = "";
+                });
+            });
+
+            WrapParent.querySelector(".update")?.addEventListener("click", () => {
+                location.reload();
+            });
+
         }, 500)
     })
     let restor = {
         DT: DT,
         update: async (url) => {
             try {
-                const res = await fetch(url)
-                DT.data = await res.json()
-                DT.update(true)
+                const res = await axios.get(url);
+                DT.data = res.data;
+                DT.update(true);
             } catch (error) {
                 console.error('Error al obtener los datos:', error);
             }
@@ -191,4 +201,26 @@ export const DTLaravel = (el, data, options) => {
     return restor;
 }
 
+
+
 window.DTLaravel = DTLaravel;
+
+
+window.addEventListener("load", ()=> {
+    const datatables = document.querySelectorAll('[data-dt]');
+    if (datatables) {
+        Array.from(datatables).forEach(dts => {
+            const datas = dts.dataset.dt
+            const options = dts.dataset.dtOptions
+            const ID = dts.id
+            const DTL = DTLaravel(dts, datas, options)
+            if ('DT' in window) {
+                window.DT[ID] = DTL;
+            } else {
+                window.DT = [];
+                window.DT[ID] = DTL;
+            }
+            
+        })
+    }
+})

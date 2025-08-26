@@ -1,5 +1,6 @@
 {
     "name": "rep98/dt-laravel-eloquent",
+    "version": "1.0.0",
     "description": "Simple DataTable para Laravel Eloquent",
     "type": "library",
     "license": "MIT",
@@ -36,18 +37,18 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^8.0",
-        "barryvdh/laravel-dompdf": "^3.0",
-        "illuminate/config": "^9.21|^10.0|^11.0",
-        "illuminate/console": "^9.21|^10.0|^11.0",
-        "illuminate/database": "^9.21|^10.0|^11.0",
-        "illuminate/filesystem": "^9.21|^10.0|^11.0",
-        "illuminate/log": "^9.21|^10.0|^11.0",
-        "illuminate/support": "^9.21|^10.0|^11.0",
+        "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^3.1",
+        "illuminate/config": "^11.0|^12.0",
+        "illuminate/console": "^11.0|^12.0",
+        "illuminate/database": "^11.0|^12.0",
+        "illuminate/filesystem": "^11.0|^12.0",
+        "illuminate/log": "^11.0|^12.0",
+        "illuminate/support": "^11.0|^12.0",
         "maatwebsite/excel": "^3.1"
     },
     "require-dev": {
         "orchestra/testbench": "^7.35|^8.15|^9.0",
-        "phpunit/phpunit": "^9.3|^10.4|^11.0"
+        "phpunit/phpunit": "^10.4|^11.5"
     }
 }
